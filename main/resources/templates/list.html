@@ -1,7 +1,7 @@
 <!doctype html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
-    <title>Todo List</title>
+    <title th:text="#{todo.list.title}">Todo List</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -9,49 +9,57 @@
 </head>
 <body>
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Todo App</h2>
-        <a class="btn btn-primary" th:href="@{/form}">Thêm công việc</a>
+    <div class="d-flex justify-content-end gap-2 mb-3">
+        <a class="btn btn-outline-secondary btn-sm" href="?lang=vi">Tiếng Việt</a>
+        <a class="btn btn-outline-secondary btn-sm" href="?lang=en">English</a>
     </div>
 
-    <div class="alert alert-success" th:if="${message}" th:text="${message}"></div>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="mb-0" th:text="#{app.title}">Todo App</h2>
+        <a class="btn btn-primary" th:href="@{/form}" th:text="#{button.add}">Add todo</a>
+    </div>
+
+    <p class="fw-semibold mb-4" th:text="#{owner.list(${session.ownerName})}">List of: Owner</p>
+
+    <div class="alert alert-success" th:if="${messageKey}" th:text="#{${messageKey}}"></div>
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <h5 class="mb-3">Danh sách công việc</h5>
+            <h5 class="mb-3" th:text="#{todo.list.heading}">Todo list</h5>
             <table class="table table-bordered">
                 <thead class="table-dark">
                 <tr>
-                    <th>ID</th>
-                    <th>Nội dung</th>
-                    <th>Hạn</th>
-                    <th>Trạng thái</th>
-                    <th>Ưu tiên</th>
-                    <th>Hành động</th>
+                    <th th:text="#{todo.field.id}">ID</th>
+                    <th th:text="#{todo.field.content}">Content</th>
+                    <th th:text="#{todo.field.dueDate}">Due date</th>
+                    <th th:text="#{todo.field.status}">Status</th>
+                    <th th:text="#{todo.field.priority}">Priority</th>
+                    <th th:text="#{todo.field.actions}">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${#lists.isEmpty(todos)}">
-                    <td colspan="6" class="text-center text-muted">Chưa có công việc nào</td>
+                    <td colspan="6" class="text-center text-muted" th:text="#{todo.empty}">No todos</td>
                 </tr>
                 <tr th:each="t : ${todos}">
                     <td th:text="${t.id}"></td>
                     <td th:text="${t.content}"></td>
                     <td th:text="${t.dueDate}"></td>
                     <td>
-                        <span th:if="${t.status == 'PENDING'}">PENDING</span>
-                        <span th:if="${t.status == 'DONE'}">DONE</span>
+                        <span th:if="${t.status == 'PENDING'}" th:text="#{todo.status.pending}">PENDING</span>
+                        <span th:if="${t.status == 'DONE'}" th:text="#{todo.status.done}">DONE</span>
                     </td>
                     <td>
-                        <span th:if="${t.priority == 'LOW'}">LOW</span>
-                        <span th:if="${t.priority == 'MEDIUM'}">MEDIUM</span>
-                        <span th:if="${t.priority == 'HIGH'}">HIGH</span>
+                        <span th:if="${t.priority == 'LOW'}" th:text="#{todo.priority.low}">LOW</span>
+                        <span th:if="${t.priority == 'MEDIUM'}" th:text="#{todo.priority.medium}">MEDIUM</span>
+                        <span th:if="${t.priority == 'HIGH'}" th:text="#{todo.priority.high}">HIGH</span>
                     </td>
                     <td class="text-nowrap">
-                        <a class="btn btn-sm btn-warning me-1" th:href="@{/todos/edit/{id}(id=${t.id})}">Sửa</a>
+                        <a class="btn btn-sm btn-warning me-1" th:href="@{/todos/edit/{id}(id=${t.id})}" th:text="#{button.edit}">Edit</a>
                         <a class="btn btn-sm btn-danger"
                            th:href="@{/todos/delete/{id}(id=${t.id})}"
-                           onclick="return confirm('Bạn có chắc muốn xóa công việc này?');">Xóa</a>
+                           th:onclick="|return confirm('#{todo.confirm.delete}');|"
+                           th:text="#{button.delete}">Delete</a>
                     </td>
                 </tr>
                 </tbody>
@@ -61,4 +69,3 @@
 </div>
 </body>
 </html>
-
